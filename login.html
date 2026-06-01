@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Login Admin - BPM FPIK UBT</title>
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="asset/css/main.css">
+    <link rel="icon" href="asset/images/logo-bpm.png">
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============ NAVBAR ============ */
+        .navbar {
+            background: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 5%;
+            color: #1e293b;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #0f3b5f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .navbar-logo .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .navbar-logo h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+            color: #1e293b;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu a {
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 8px 0;
+            transition: color 0.2s;
+        }
+
+        .nav-menu a:hover {
+            color: #0f3b5f;
+        }
+
+        /* ============ LOGIN CONTAINER ============ */
+        .login-container {
+            max-width: 420px;
+            margin: 60px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 32px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo-icon-login {
+            width: 60px;
+            height: 60px;
+            background: #0f3b5f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin: 0 auto 20px;
+        }
+
+        .logo-icon-login img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .login-container h2 {
+            color: #0f3b5f;
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .login-container .subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-bottom: 28px;
+        }
+
+        /* ============ FORM ============ */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            color: #0f3b5f;
+            margin-bottom: 6px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            background: #ffffff;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #0f3b5f;
+            box-shadow: 0 0 0 2px rgba(15, 59, 95, 0.1);
+        }
+
+        /* ============ BUTTON ============ */
+        .btn-login {
+            width: 100%;
+            background: #0f3b5f;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-login:hover {
+            background: #0a2a44;
+        }
+
+        .btn-login:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        /* ============ FOOTER ============ */
+        footer {
+            background: #0f3b5f;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+        }
+
+        footer p {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+                padding: 12px 5%;
+            }
+            
+            .nav-menu {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 30px 16px;
+                padding: 24px;
+            }
+            
+            .login-container h2 {
+                font-size: 1.3rem;
+            }
+            
+            .logo-icon-login {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="navbar-logo">
+        <div class="logo-icon">
+            <img src="asset/images/logo-bpm.png" alt="Logo BPM">
+        </div>
+        <h1>BPM FPIK UBT</h1>
+    </div>
+    <div class="nav-menu">
+        <a href="https://webhostingmhs-stack.github.io/bpm-22/index.html">
+            <i class="fas fa-home"></i> Beranda
+        </a>
+        <a href="https://webhostingmhs-stack.github.io/bpm-22/html/about.html">
+            <i class="fas fa-info-circle"></i> Tentang
+        </a>
+        <a href="https://webhostingmhs-stack.github.io/bpm-22/html/dashboard/dashboard.html">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+    </div>
+</nav>
+
+<section style="padding: 40px 5%; flex: 1;">
+    <div class="login-container">
+        <div class="logo-icon-login">
+            <img src="asset/images/logo-bpm.png" alt="Logo BPM">
+        </div>
+        <h2>Admin Panel</h2>
+        <p class="subtitle">Masukkan kredensial untuk mengakses dashboard admin</p>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Username</label>
+                <input type="text" id="username" placeholder="Masukkan username" required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="password" placeholder="Masukkan password" required>
+            </div>
+            <button type="submit" class="btn-login" id="submitBtn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+        </form>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 BPM FPIK UBT | Badan Perwakilan Mahasiswa Fakultas Perikanan dan Ilmu Kelautan</p>
+    <p style="font-size: 0.65rem; margin-top: 8px;">Admin Login Panel</p>
+</footer>
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // ============= KONFIGURASI HARDCODE =============
+    const VALID_USERNAME = 'bpmadmin';
+    const VALID_PASSWORD = 'bpm2026';
+    
+    const form = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+        
+        if (!username || !password) {
+            await Swal.fire({
+                icon: 'warning',
+                title: 'Field Kosong',
+                text: 'Harap isi username dan password!',
+                confirmButtonColor: '#0f3b5f',
+                confirmButtonText: '<i class="fas fa-check"></i> OK',
+                background: '#fff',
+                backdrop: true
+            });
+            return;
+        }
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Memproses...';
+        
+        setTimeout(async () => {
+            if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+                localStorage.setItem('adminLoggedIn', 'true');
+                localStorage.setItem('adminLoginTime', new Date().getTime());
+                localStorage.setItem('adminUsername', username);
+                
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Login Berhasil!',
+                    text: 'Selamat datang, Administrator BPM FPIK UBT',
+                    confirmButtonColor: '#0f3b5f',
+                    confirmButtonText: '<i class="fas fa-tachometer-alt"></i> Masuk Dashboard',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    background: '#fff',
+                    backdrop: true
+                });
+                
+                window.location.href = 'index.html';
+            } else {
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Login Gagal!',
+                    text: 'Username atau password yang Anda masukkan salah.',
+                    confirmButtonColor: '#0f3b5f',
+                    confirmButtonText: '<i class="fas fa-redo-alt"></i> Coba Lagi',
+                    background: '#fff',
+                    backdrop: true
+                });
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                document.getElementById('password').value = '';
+                document.getElementById('password').focus();
+            }
+        }, 500);
+    });
+</script>
+</body>
+</html>
