@@ -1,9 +1,8 @@
 // ============= KONFIGURASI API =============
-// const API_URL = 'https://script.google.com/macros/s/AKfycbwSIrtIIePFTLi9mYISG6Z1cw9ihZMOqKtcfQ6ZrIfeEKelZ3ct9vYfugc-llFaAaXTig/exec';
-
-// // ============= KONFIGURASI CLOUDINARY =============
-// const CLOUD_NAME = 'dvkejsfrp';
-// const UPLOAD_PRESET = 'bpm_upload';
+// API_URL diambil dari window (dideklarasikan di index.html)
+const API_URL = typeof API_URL !== 'undefined' ? API_URL : window.API_URL;
+const CLOUD_NAME = 'dvkejsfrp';
+const UPLOAD_PRESET = 'bpm_upload';
 
 // ============= UTILITY =============
 function showToast(msg, type = 'success') {
@@ -25,6 +24,16 @@ function escapeHtml(text) {
 function closeModalForm() {
     const modal = document.getElementById('modalForm');
     if (modal) modal.remove();
+}
+
+function formatNumber(num) {
+    return new Intl.NumberFormat('id-ID').format(num);
+}
+
+function formatDateTime(dateStr) {
+    if (!dateStr) return '-';
+    const date = new Date(dateStr);
+    return `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
 }
 
 // ============= UPLOAD KE CLOUDINARY =============
@@ -63,25 +72,21 @@ async function uploadToCloudinary(file) {
     });
 }
 
-// ============= TAB NAVIGATION DENGAN SCROLL OTOMATIS =============
+// ============= TAB NAVIGATION =============
 function switchTab(tab) {
-    // Sembunyikan semua tab pane
     document.querySelectorAll('.tab-pane').forEach(pane => {
         pane.classList.remove('active');
     });
     
-    // Nonaktifkan semua tombol tab
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
     
-    // Tampilkan tab pane yang dipilih
     const activePane = document.getElementById(`tab-${tab}`);
     if (activePane) {
         activePane.classList.add('active');
     }
     
-    // Aktifkan tombol yang sesuai
     const buttons = document.querySelectorAll('.tab-btn');
     for (let i = 0; i < buttons.length; i++) {
         const btn = buttons[i];
@@ -92,7 +97,6 @@ function switchTab(tab) {
         }
     }
     
-    // SCROLL OTOMATIS KE KONTEN TAB
     setTimeout(() => {
         const activeContent = document.querySelector('.tab-pane.active');
         if (activeContent) {
@@ -104,19 +108,20 @@ function switchTab(tab) {
         }
     }, 100);
     
-    // Load data sesuai tab yang dipilih
     if (tab === 'kegiatan') {
         if (typeof loadKegiatan === 'function') loadKegiatan();
     } else if (tab === 'aspirasi') {
         if (typeof loadAspirasi === 'function') loadAspirasi();
     } else if (tab === 'berkas') {
         if (typeof loadBerkasList === 'function') loadBerkasList();
+    } else if (tab === 'statistik') {
+        if (typeof loadAllStats === 'function') loadAllStats();
     } else {
         if (typeof loadAnggota === 'function') loadAnggota();
     }
 }
 
-// ============= LOGOUT ADMIN (SweetAlert) =============
+// ============= LOGOUT ADMIN =============
 function adminLogout() {
     Swal.fire({
         title: 'Yakin ingin logout?',
@@ -142,13 +147,13 @@ function adminLogout() {
                 timer: 1500,
                 timerProgressBar: true
             }).then(() => {
-                window.location.href = 'admin-login.html';
+                window.location.href = 'login.html';
             });
         }
     });
 }
 
-// ============= ANGGOTA BPM =============
+// ==================== ANGGOTA BPM ====================
 async function loadAnggota() {
     const grid = document.getElementById('memberGrid');
     if (!grid) return;
@@ -247,7 +252,6 @@ function renderAnggota(anggotaList) {
     
     grid.innerHTML = addButton + cardsHtml;
     
-    // Hidden file inputs untuk upload foto
     anggotaList.forEach(m => {
         if (!document.getElementById(`file_member_${m.id}`)) {
             const input = document.createElement('input');
@@ -348,7 +352,6 @@ async function tambahAnggota() {
     }
 }
 
-// HAPUS ANGGOTA DENGAN SWEETALERT
 async function hapusAnggota(id, nama, rowIndex) {
     const result = await Swal.fire({
         title: 'Hapus Anggota?',
@@ -445,7 +448,7 @@ async function saveMember(memberId, rowIndex) {
     }
 }
 
-// ============= KEGIATAN =============
+// ==================== KEGIATAN ====================
 async function loadKegiatan() {
     const grid = document.getElementById('kegiatanGrid');
     if (!grid) return;
@@ -469,6 +472,7 @@ async function loadKegiatan() {
             `;
         }
     } catch (error) {
+        console.error('Error:', error);
         grid.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data</div>';
     }
 }
@@ -586,7 +590,6 @@ async function tambahKegiatan() {
     }
 }
 
-// HAPUS KEGIATAN DENGAN SWEETALERT
 async function hapusKegiatan(rowIndex, title) {
     const result = await Swal.fire({
         title: 'Hapus Kegiatan?',
@@ -665,7 +668,6 @@ async function handleKegiatanUpload(kegiatanId, rowIndex, event) {
     event.target.value = '';
 }
 
-// HAPUS FOTO KEGIATAN DENGAN SWEETALERT
 async function deleteKegiatanImage(kegiatanId, imgIndex) {
     const result = await Swal.fire({
         title: 'Hapus Foto?',
@@ -720,7 +722,7 @@ async function saveKegiatan(kegiatanId, rowIndex) {
     }
 }
 
-// ============= ASPIRASI =============
+// ==================== ASPIRASI ====================
 async function loadAspirasi() {
     const container = document.getElementById('aspirasiGrid');
     if (!container) return;
@@ -762,6 +764,7 @@ async function loadAspirasi() {
             container.innerHTML = '<div class="empty-state"><i class="fas fa-comment-dots" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i><p>Belum ada aspirasi yang masuk</p></div>';
         }
     } catch (error) {
+        console.error('Error:', error);
         container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i> Gagal memuat aspirasi</div>';
     }
 }
@@ -785,7 +788,7 @@ async function updateStatusAspirasi(rowIndex, statusBaru) {
     }
 }
 
-// ============= BERKAS =============
+// ==================== BERKAS ====================
 async function loadBerkasList() {
     const container = document.getElementById('berkasListContainer');
     if (!container) return;
@@ -820,6 +823,7 @@ async function loadBerkasList() {
             container.innerHTML = '<div class="empty-state"><i class="fas fa-folder-open" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i><p>Belum ada berkas. Upload berkas pertama di atas.</p></div>';
         }
     } catch (error) {
+        console.error('Error:', error);
         container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i> Gagal memuat berkas</div>';
     }
 }
@@ -867,7 +871,6 @@ async function uploadBerkasBaru() {
     reader.readAsDataURL(file);
 }
 
-// HAPUS BERKAS DENGAN SWEETALERT
 async function hapusBerkas(fileId, rowIndex) {
     const result = await Swal.fire({
         title: 'Hapus Berkas?',
@@ -897,6 +900,118 @@ async function hapusBerkas(fileId, rowIndex) {
         loadBerkasList();
     } catch (error) {
         showToast('Gagal hapus', 'error');
+    }
+}
+
+// ==================== STATISTIK ====================
+async function loadAllStats() {
+    await loadDashboardStats();
+    await loadVisitorStats();
+    await loadVisitorChart();
+    await loadVisitorLog();
+}
+
+async function loadDashboardStats() {
+    try {
+        const response = await fetch(`${API_URL}?action=getDashboardStats`);
+        const result = await response.json();
+        
+        if (result.success) {
+            document.getElementById('statMahasiswa').innerText = formatNumber(result.data.mahasiswa);
+            document.getElementById('statPenilaian').innerText = formatNumber(result.data.penilaian);
+            document.getElementById('statAspirasi').innerText = formatNumber(result.data.aspirasi);
+            document.getElementById('statKegiatan').innerText = formatNumber(result.data.kegiatan);
+            document.getElementById('statAnggota').innerText = formatNumber(result.data.anggota);
+            document.getElementById('statBerkas').innerText = formatNumber(result.data.berkas);
+            document.getElementById('statAvgRating').innerText = result.data.avgRating;
+            
+            document.getElementById('statAspirasiBelum').innerText = formatNumber(result.data.aspirasiStatus.belum);
+            document.getElementById('statAspirasiDibaca').innerText = formatNumber(result.data.aspirasiStatus.dibaca);
+            document.getElementById('statAspirasiTindak').innerText = formatNumber(result.data.aspirasiStatus.tindakLanjut);
+        }
+    } catch (error) {
+        console.error('Error loading dashboard stats:', error);
+    }
+}
+
+async function loadVisitorStats() {
+    try {
+        const response = await fetch(`${API_URL}?action=getVisitorStats`);
+        const result = await response.json();
+        
+        if (result.success) {
+            document.getElementById('statTotalVisitors').innerText = formatNumber(result.data.totalVisitors);
+            document.getElementById('statTodayVisitors').innerText = formatNumber(result.data.todayVisitors);
+            document.getElementById('statWeekVisitors').innerText = formatNumber(result.data.weekVisitors);
+            document.getElementById('statMonthVisitors').innerText = formatNumber(result.data.monthVisitors);
+            document.getElementById('statPageViews').innerText = formatNumber(result.data.pageViews);
+        }
+    } catch (error) {
+        console.error('Error loading visitor stats:', error);
+    }
+}
+
+async function loadVisitorChart() {
+    try {
+        const response = await fetch(`${API_URL}?action=getDailyVisits`);
+        const result = await response.json();
+        const container = document.getElementById('visitorChart');
+        
+        if (result.success && result.data && result.data.length > 0) {
+            let html = '<div class="chart-bars">';
+            const hari = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+            const maxCount = Math.max(...result.data.map(d => d.count), 1);
+            
+            result.data.forEach(item => {
+                const date = new Date(item.date);
+                const hariNama = hari[date.getDay()];
+                const persen = (item.count / maxCount) * 60;
+                
+                html += `
+                    <div class="chart-bar-item">
+                        <div class="chart-value" style="font-size:11px;">${item.count}</div>
+                        <div class="chart-bar" style="height: ${Math.max(persen, 20)}px;"></div>
+                        <div class="chart-label" style="font-size:10px;">${hariNama}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<div class="empty-data" style="padding:20px;"><i class="fas fa-chart-line"></i> Belum ada data kunjungan</div>';
+        }
+    } catch (error) {
+        console.error('Error loading chart:', error);
+    }
+}
+
+async function loadVisitorLog() {
+    try {
+        const response = await fetch(`${API_URL}?action=getVisitorLog&limit=20`);
+        const result = await response.json();
+        const tbody = document.getElementById('visitorLogBody');
+        
+        if (result.success && result.data && result.data.length > 0) {
+            let html = '';
+            result.data.forEach(log => {
+                const statusBadge = log.isMahasiswa === 'ya' 
+                    ? '<span class="badge-mahasiswa">Mahasiswa</span>' 
+                    : '<span class="badge-tamu">Tamu</span>';
+                html += `
+                    <tr>
+                        <td>${formatDateTime(log.visitTime)}</td>
+                        <td>${escapeHtml(log.page)}</td>
+                        <td>${escapeHtml(log.device || '-')}</td>
+                        <td>${statusBadge}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        } else {
+            tbody.innerHTML = '<tr><td colspan="4" class="empty-data" style="text-align:center;">Belum ada data kunjungan</td></td>';
+        }
+    } catch (error) {
+        console.error('Error loading log:', error);
     }
 }
 
